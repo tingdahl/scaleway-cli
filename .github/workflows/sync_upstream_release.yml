@@ -100,13 +100,10 @@ jobs:
           git checkout -B "${BRANCH}" origin/main
           git merge "${TAG_REF}" -m "Merging upstream tag ${TAG}"
 
-          # Keep our fork's workflow configuration so PR triggers are not overridden
-          git checkout origin/main -- .github/workflows
-
           sed "s/VERSION/${SNAP_VERSION}/g" snapbuild/snapcraft.yaml.template > snapcraft.yaml
 
-          if ! git diff --quiet -- snapcraft.yaml .github/workflows; then
-            git add snapcraft.yaml .github/workflows
+          if ! git diff --quiet -- snapcraft.yaml; then
+            git add snapcraft.yaml
             git commit -m "Setting version ${SNAP_VERSION} in snapcraft.yaml (upstream tag ${TAG})"
           fi
 
