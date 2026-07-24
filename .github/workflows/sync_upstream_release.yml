@@ -189,8 +189,7 @@ jobs:
                   `mutation($pullRequestId: ID!, $mergeMethod: PullRequestMergeMethod!) {
                     enablePullRequestAutoMerge(input: {
                       pullRequestId: $pullRequestId,
-                      mergeMethod: $mergeMethod,
-                      deleteHeadBranch: true
+                      mergeMethod: $mergeMethod
                     }) {
                       clientMutationId
                     }
