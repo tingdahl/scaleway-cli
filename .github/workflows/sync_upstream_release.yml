@@ -13,7 +13,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  workflows: write
 
 jobs:
   merge-upstream-release:
@@ -99,12 +98,36 @@ jobs:
           set -euo pipefail
 
           git checkout -B "${BRANCH}" origin/main
-          git merge "${TAG_REF}" -m "Merging upstream tag ${TAG}"
+
+          # Attempt to merge upstream tag. If it fails, check if the conflicts are only in .github/workflows.
+          if ! git merge "${TAG_REF}" -m "Merging upstream tag ${TAG}"; then
+            unmerged_files=$(git diff --name-only --diff-filter=U)
+            if [[ -z "${unmerged_files}" ]]; then
+              echo "Merge failed for a reason other than merge conflicts."
+              exit 1
+            fi
+
+            non_workflow_conflicts=$(echo "${unmerged_files}" | grep -v '^.github/workflows/' || true)
+            if [[ -n "${non_workflow_conflicts}" ]]; then
+              echo "Merge failed due to unexpected conflicts outside of .github/workflows/:"
+              echo "${non_workflow_conflicts}"
+              echo "Aborting merge to revert the working directory."
+              git merge --abort
+              exit 1
+            fi
+
+            echo "Conflicts found only in .github/workflows/. Resolving using our fork's versions from origin/main..."
+            git checkout origin/main -- .github/workflows
+            git commit --no-edit
+          else
+            # Keep our fork's workflow configuration so PR triggers are not overridden
+            git checkout origin/main -- .github/workflows
+          fi
 
           sed "s/VERSION/${SNAP_VERSION}/g" snapbuild/snapcraft.yaml.template > snapcraft.yaml
 
-          if ! git diff --quiet -- snapcraft.yaml; then
-            git add snapcraft.yaml
+          if ! git diff --quiet -- snapcraft.yaml .github/workflows; then
+            git add snapcraft.yaml .github/workflows
             git commit -m "Setting version ${SNAP_VERSION} in snapcraft.yaml (upstream tag ${TAG})"
           fi
 
