@@ -2,36 +2,126 @@
 # Documentation for `scw vpc`
 This API allows you to manage your Virtual Private Clouds (VPCs) and Private Networks.
 
-- [Private network management command](#private-network-management-command)
-  - [Create a Private Network](#create-a-private-network)
-  - [Delete a Private Network](#delete-a-private-network)
-  - [Enable DHCP on a Private Network](#enable-dhcp-on-a-private-network)
-  - [Get a Private Network](#get-a-private-network)
-  - [List Private Networks](#list-private-networks)
-  - [Update Private Network](#update-private-network)
-- [Route management command](#route-management-command)
-  - [Create a Route](#create-a-route)
-  - [Delete a Route](#delete-a-route)
-  - [Enable routing on a VPC](#enable-routing-on-a-vpc)
-  - [Get a Route](#get-a-route)
-  - [Return routes with associated next hop data](#return-routes-with-associated-next-hop-data)
-  - [Update Route](#update-route)
-- [Rule management command](#rule-management-command)
-  - [Edit all ACL rules of a VPC](#edit-all-acl-rules-of-a-vpc)
-  - [Get ACL Rules for VPC](#get-acl-rules-for-vpc)
-  - [Set VPC ACL rules](#set-vpc-acl-rules)
-- [VPC management command](#vpc-management-command)
-  - [Create a VPC](#create-a-vpc)
-  - [Delete a VPC](#delete-a-vpc)
-  - [Get a VPC](#get-a-vpc)
-  - [List VPCs](#list-vpcs)
-  - [Update VPC](#update-vpc)
-- [VPC connector management command](#vpc-connector-management-command)
-  - [Create a VPC connector](#create-a-vpc-connector)
-  - [Delete a VPC connector](#delete-a-vpc-connector)
-  - [Get a VPC connector](#get-a-vpc-connector)
-  - [List VPC connectors](#list-vpc-connectors)
-  - [Update VPC connector](#update-vpc-connector)
+## Ingress rule management command
+
+Ingress rules.
+
+
+### Create an ingress rule
+
+Create an ingress rule in the specified region.
+
+**Usage:**
+
+```shell
+scw vpc ingress-rule create [arg=value ...]
+```
+
+
+**Args:**
+
+| Name |   | Description |
+|------|---|-------------|
+| vpc-id | Required | ID of the VPC this rule will belong to |
+| source | Required | Source network to match ingress traffic on. Can be IPv6 or IPv4 |
+| nexthop-resource-ip | Required | IP of the local resource to redirect ingress traffic to. IP version must be consistent with the source network |
+| nexthop-private-network-id | Required | ID of the Private Network the destination resource is in |
+| description |  | Description for this ingress rule |
+| tags.{index} |  | Tags for this ingress rule |
+| region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
+
+
+
+### Delete an ingress rule
+
+Delete an ingress rule specified by its ingress rule ID.
+
+**Usage:**
+
+```shell
+scw vpc ingress-rule delete <rule-id ...> [arg=value ...]
+```
+
+
+**Args:**
+
+| Name |   | Description |
+|------|---|-------------|
+| rule-id | Required | ID of the ingress rule to delete |
+| region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
+
+
+
+### Get an ingress rule
+
+Retrieve details of an existing ingress rule, specified by its ingress rule ID.
+
+**Usage:**
+
+```shell
+scw vpc ingress-rule get <rule-id ...> [arg=value ...]
+```
+
+
+**Args:**
+
+| Name |   | Description |
+|------|---|-------------|
+| rule-id | Required | ID of the ingress rule to return |
+| region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
+
+
+
+### List ingress rules
+
+List existing ingress rules in the specified region.
+
+**Usage:**
+
+```shell
+scw vpc ingress-rule list [arg=value ...]
+```
+
+
+**Args:**
+
+| Name |   | Description |
+|------|---|-------------|
+| order-by | One of: `created_at_asc`, `created_at_desc`, `source_asc`, `source_desc`, `prefix_len_asc`, `prefix_len_desc` | Sort order of the returned ingress rules |
+| vpc-id |  | ID of the VPC to filter for |
+| nexthop-resource-ip |  | Next hop IP to filter for |
+| nexthop-private-network-id |  | Next hop Private Network ID to filter for. Only ingress rules with this Private Network as next hop will be returned |
+| is-ipv6 |  | Whether to return only IPv4 or IPv6 ingress rules |
+| tags.{index} |  | Tags to filter for. Only ingress rules with one or more matching tags will be returned |
+| project-id |  | Project ID to filter for. Only ingress rules belonging to this Project will be returned |
+| organization-id |  | Organization ID to filter for. Only ingress rules belonging to this Organization will be returned |
+| region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw`, `all` | Region to target. If none is passed will use default region from the config |
+
+
+
+### Update an ingress rule
+
+Update an ingress rule specified by its ingress rule ID.
+
+**Usage:**
+
+```shell
+scw vpc ingress-rule update <rule-id ...> [arg=value ...]
+```
+
+
+**Args:**
+
+| Name |   | Description |
+|------|---|-------------|
+| rule-id | Required | ID of the ingress rule to update |
+| source |  | Source network to match ingress traffic on. Can be IPv4 or IPv6 |
+| nexthop-resource-ip |  | IP of the local resource to redirect ingress traffic to. IP version must be consistent with the source network |
+| nexthop-private-network-id |  | ID of the Private Network the destination resource is in |
+| description |  | Description to set for this ingress rule |
+| tags.{index} |  | Tags to set for this ingress rule |
+| region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
+
 
 
 ## Private network management command

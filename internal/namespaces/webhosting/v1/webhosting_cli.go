@@ -1613,6 +1613,8 @@ func webhostingHostingList() *core.Command {
 					"locked",
 					"migrating",
 					"updating",
+					"payment_pending",
+					"payment_failed",
 				},
 			},
 			{
@@ -1778,6 +1780,13 @@ func webhostingHostingUpdate() *core.Command {
 			{
 				Name:       "protected",
 				Short:      `Whether the hosting is protected or not`,
+				Required:   false,
+				Deprecated: false,
+				Positional: false,
+			},
+			{
+				Name:       "delete-hosting-after-commitment",
+				Short:      `Whether the hosting is deleted at the end of the commitment period`,
 				Required:   false,
 				Deprecated: false,
 				Positional: false,

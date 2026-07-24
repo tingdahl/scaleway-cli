@@ -2,48 +2,6 @@
 # Documentation for `scw function`
 Function as a Service API.
 
-- [Cron management commands](#cron-management-commands)
-  - [Create a new cron](#create-a-new-cron)
-  - [Delete an existing cron](#delete-an-existing-cron)
-  - [Get a cron](#get-a-cron)
-  - [List all crons](#list-all-crons)
-  - [Update an existing cron](#update-an-existing-cron)
-- [Deploy a function](#deploy-a-function)
-- [Domain management commands](#domain-management-commands)
-  - [Create a domain name binding](#create-a-domain-name-binding)
-  - [Delete a domain name binding](#delete-a-domain-name-binding)
-  - [Get a domain name binding](#get-a-domain-name-binding)
-  - [List all domain name bindings](#list-all-domain-name-bindings)
-- [Function management commands](#function-management-commands)
-  - [Create a new function](#create-a-new-function)
-  - [Delete a function](#delete-a-function)
-  - [Deploy a function](#deploy-a-function)
-  - [Get a function](#get-a-function)
-  - [Get a download URL of a function](#get-a-download-url-of-a-function)
-  - [Get an upload URL of a function](#get-an-upload-url-of-a-function)
-  - [List all your functions](#list-all-your-functions)
-  - [Update an existing function](#update-an-existing-function)
-- [Function namespace management commands](#function-namespace-management-commands)
-  - [Create a new namespace](#create-a-new-namespace)
-  - [Delete an existing namespace](#delete-an-existing-namespace)
-  - [Get a namespace](#get-a-namespace)
-  - [List all your namespaces](#list-all-your-namespaces)
-  - [Update an existing namespace](#update-an-existing-namespace)
-- [Runtime management commands](#runtime-management-commands)
-  - [List function runtimes](#list-function-runtimes)
-- [Token management commands](#token-management-commands)
-  - [Create a new revocable token](#create-a-new-revocable-token)
-  - [Delete a token](#delete-a-token)
-  - [Get a token](#get-a-token)
-  - [List all tokens](#list-all-tokens)
-- [Trigger management commands](#trigger-management-commands)
-  - [Create a trigger](#create-a-trigger)
-  - [Delete a trigger](#delete-a-trigger)
-  - [Get a trigger](#get-a-trigger)
-  - [List all triggers](#list-all-triggers)
-  - [Update a trigger](#update-a-trigger)
-
-
 ## Cron management commands
 
 Cron management commands.
@@ -176,7 +134,7 @@ scw function deploy [arg=value ...]
 |------|---|-------------|
 | namespace-id |  | Function Namespace ID to deploy to |
 | name | Required | Name of the function to deploy, will be used in namespace's name if no ID is provided |
-| runtime | Required<br />One of: `unknown_runtime`, `golang`, `python`, `python3`, `node8`, `node10`, `node14`, `node16`, `node17`, `python37`, `python38`, `python39`, `python310`, `go113`, `go117`, `go118`, `node18`, `rust165`, `go119`, `python311`, `php82`, `node19`, `go120`, `node20`, `go121`, `node22`, `python312`, `php83`, `go122`, `rust179`, `go123`, `go124`, `python313`, `rust185`, `php84` |  |
+| runtime | Required<br />One of: `unknown_runtime`, `golang`, `python`, `python3`, `node8`, `node10`, `node14`, `node16`, `node17`, `python37`, `python38`, `python39`, `python310`, `go113`, `go117`, `go118`, `node18`, `rust165`, `go119`, `python311`, `php82`, `node19`, `go120`, `node20`, `go121`, `node22`, `python312`, `php83`, `go122`, `rust179`, `go123`, `go124`, `python313`, `rust185`, `php84`, `node24`, `node26`, `go125`, `go126`, `php85`, `python314`, `rust196` |  |
 | zip-file | Required | Path of the zip file that contains your code |
 | region | Default: `fr-par`<br />One of: `fr-par`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
 
@@ -294,7 +252,7 @@ scw function function create [arg=value ...]
 | environment-variables.{key} |  | Environment variables of the function |
 | min-scale |  | Minimum number of instances to scale the function to |
 | max-scale |  | Maximum number of instances to scale the function to |
-| runtime | One of: `unknown_runtime`, `golang`, `python`, `python3`, `node8`, `node10`, `node14`, `node16`, `node17`, `python37`, `python38`, `python39`, `python310`, `go113`, `go117`, `go118`, `node18`, `rust165`, `go119`, `python311`, `php82`, `node19`, `go120`, `node20`, `go121`, `node22`, `python312`, `php83`, `go122`, `rust179`, `go123`, `go124`, `python313`, `rust185`, `php84` | Runtime to use with the function |
+| runtime | One of: `unknown_runtime`, `golang`, `python`, `python3`, `node8`, `node10`, `node14`, `node16`, `node17`, `python37`, `python38`, `python39`, `python310`, `go113`, `go117`, `go118`, `node18`, `rust165`, `go119`, `python311`, `php82`, `node19`, `go120`, `node20`, `go121`, `node22`, `python312`, `php83`, `go122`, `rust179`, `go123`, `go124`, `python313`, `rust185`, `php84`, `node24`, `node26`, `go125`, `go126`, `php85`, `python314`, `rust196` | Runtime to use with the function |
 | memory-limit |  | Memory limit of the function in MB |
 | timeout |  | Request processing time limit for the function |
 | handler |  | Handler to use with the function |
@@ -457,7 +415,7 @@ scw function function update <function-id ...> [arg=value ...]
 | environment-variables.{key} |  | Environment variables of the function to update |
 | min-scale |  | Minimum number of instances to scale the function to |
 | max-scale |  | Maximum number of instances to scale the function to |
-| runtime | One of: `unknown_runtime`, `golang`, `python`, `python3`, `node8`, `node10`, `node14`, `node16`, `node17`, `python37`, `python38`, `python39`, `python310`, `go113`, `go117`, `go118`, `node18`, `rust165`, `go119`, `python311`, `php82`, `node19`, `go120`, `node20`, `go121`, `node22`, `python312`, `php83`, `go122`, `rust179`, `go123`, `go124`, `python313`, `rust185`, `php84` | Runtime to use with the function |
+| runtime | One of: `unknown_runtime`, `golang`, `python`, `python3`, `node8`, `node10`, `node14`, `node16`, `node17`, `python37`, `python38`, `python39`, `python310`, `go113`, `go117`, `go118`, `node18`, `rust165`, `go119`, `python311`, `php82`, `node19`, `go120`, `node20`, `go121`, `node22`, `python312`, `php83`, `go122`, `rust179`, `go123`, `go124`, `python313`, `rust185`, `php84`, `node24`, `node26`, `go125`, `go126`, `php85`, `python314`, `rust196` | Runtime to use with the function |
 | memory-limit |  | Memory limit of the function in MB |
 | timeout |  | Processing time limit for the function |
 | redeploy |  | Redeploy failed function |

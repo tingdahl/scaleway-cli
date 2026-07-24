@@ -2,19 +2,31 @@
 # Documentation for `scw ipam`
 This API allows you to manage your Scaleway IP addresses with our IP Address Management tool.
 
-- [IP management command](#ip-management-command)
-  - [Reserve a new IP](#reserve-a-new-ip)
-  - [Release an IP](#release-an-ip)
-  - [Get an IP](#get-an-ip)
-  - [List existing IPs](#list-existing-ips)
-  - [Update an IP](#update-an-ip)
-- [Management command for sets of IPs](#management-command-for-sets-of-ips)
-  - [Release ipam resources](#release-ipam-resources)
-
-
 ## IP management command
 
 *ips_long.
+
+
+### Attach private IP to custom resource
+
+Attach an existing reserved private IP from a Private Network subnet to a custom, named resource via its MAC address. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for attaching IP addresses to standard Scaleway resources as it will fail - see the relevant product API for an equivalent method.
+
+**Usage:**
+
+```shell
+scw ipam ip attach <ip-id ...> [arg=value ...]
+```
+
+
+**Args:**
+
+| Name |   | Description |
+|------|---|-------------|
+| ip-id | Required | IP ID |
+| resource.mac-address |  | MAC address of the custom resource |
+| resource.name |  | Name of the custom resource |
+| region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
+
 
 
 ### Reserve a new IP
@@ -66,6 +78,28 @@ scw ipam ip delete <ip-id ...> [arg=value ...]
 
 
 
+### Detach private IP from a custom resource
+
+Detach a private IP from a custom resource. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for detaching IP addresses from standard Scaleway resources (e.g. Instances, Load Balancers) as it will fail - see the relevant product API for an equivalent method.
+
+**Usage:**
+
+```shell
+scw ipam ip detach <ip-id ...> [arg=value ...]
+```
+
+
+**Args:**
+
+| Name |   | Description |
+|------|---|-------------|
+| ip-id | Required | IP ID |
+| resource.mac-address |  | MAC address of the custom resource |
+| resource.name |  | Name of the custom resource |
+| region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
+
+
+
 ### Get an IP
 
 Retrieve details of an existing IP, specified by its IP ID.
@@ -111,8 +145,8 @@ scw ipam ip list [arg=value ...]
 | resource-name |  | Attached resource name to filter for, only IPs attached to a resource with this string within their name will be returned. |
 | resource-id |  | Resource ID to filter for. Only IPs attached to this resource will be returned |
 | resource-ids.{index} |  | Resource IDs to filter for. Only IPs attached to at least one of these resources will be returned |
-| resource-type | One of: `unknown_type`, `custom`, `instance_server`, `instance_ip`, `instance_private_nic`, `lb_server`, `fip_ip`, `vpc_gateway`, `vpc_gateway_network`, `k8s_node`, `k8s_cluster`, `rdb_instance`, `redis_cluster`, `baremetal_server`, `baremetal_private_nic`, `llm_deployment`, `mgdb_instance`, `apple_silicon_server`, `apple_silicon_private_nic`, `serverless_container`, `serverless_function`, `vpn_gateway`, `ddl_datalab`, `kafka_cluster`, `bgp_endpoint`, `scbl_sedb_cluster`, `dtwh_deployment`, `sedb_cluster`, `msgq_cluster`, `edge_vpc_endpoint` | Resource type to filter for. Only IPs attached to this type of resource will be returned |
-| resource-types.{index} | One of: `unknown_type`, `custom`, `instance_server`, `instance_ip`, `instance_private_nic`, `lb_server`, `fip_ip`, `vpc_gateway`, `vpc_gateway_network`, `k8s_node`, `k8s_cluster`, `rdb_instance`, `redis_cluster`, `baremetal_server`, `baremetal_private_nic`, `llm_deployment`, `mgdb_instance`, `apple_silicon_server`, `apple_silicon_private_nic`, `serverless_container`, `serverless_function`, `vpn_gateway`, `ddl_datalab`, `kafka_cluster`, `bgp_endpoint`, `scbl_sedb_cluster`, `dtwh_deployment`, `sedb_cluster`, `msgq_cluster`, `edge_vpc_endpoint` | Resource types to filter for. Only IPs attached to these types of resources will be returned |
+| resource-type | One of: `unknown_type`, `custom`, `instance_server`, `instance_ip`, `instance_private_nic`, `lb_server`, `fip_ip`, `vpc_gateway`, `vpc_gateway_network`, `k8s_node`, `k8s_cluster`, `rdb_instance`, `redis_cluster`, `baremetal_server`, `baremetal_private_nic`, `llm_deployment`, `mgdb_instance`, `apple_silicon_server`, `apple_silicon_private_nic`, `serverless_container`, `serverless_function`, `vpn_gateway`, `ddl_datalab`, `kafka_cluster`, `bgp_endpoint`, `scbl_sedb_cluster`, `dtwh_deployment`, `sedb_cluster`, `msgq_cluster`, `edge_vpc_endpoint`, `dviz_cluster` | Resource type to filter for. Only IPs attached to this type of resource will be returned |
+| resource-types.{index} | One of: `unknown_type`, `custom`, `instance_server`, `instance_ip`, `instance_private_nic`, `lb_server`, `fip_ip`, `vpc_gateway`, `vpc_gateway_network`, `k8s_node`, `k8s_cluster`, `rdb_instance`, `redis_cluster`, `baremetal_server`, `baremetal_private_nic`, `llm_deployment`, `mgdb_instance`, `apple_silicon_server`, `apple_silicon_private_nic`, `serverless_container`, `serverless_function`, `vpn_gateway`, `ddl_datalab`, `kafka_cluster`, `bgp_endpoint`, `scbl_sedb_cluster`, `dtwh_deployment`, `sedb_cluster`, `msgq_cluster`, `edge_vpc_endpoint`, `dviz_cluster` | Resource types to filter for. Only IPs attached to these types of resources will be returned |
 | mac-address |  | MAC address to filter for. Only IPs attached to a resource with this MAC address will be returned |
 | tags.{index} |  | Tags to filter for, only IPs with one or more matching tags will be returned |
 | is-ipv6 |  | Defines whether to filter only for IPv4s or IPv6s |
@@ -120,6 +154,30 @@ scw ipam ip list [arg=value ...]
 | source-vpc-id |  |  |
 | organization-id |  | Organization ID to filter for. Only IPs belonging to this Organization will be returned |
 | region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw`, `all` | Region to target. If none is passed will use default region from the config |
+
+
+
+### Move private IP to a custom resource
+
+Move an existing reserved private IP from one custom resource (e.g. a virtual machine hosted on an Elastic Metal server) to another custom resource. This will detach it from the first resource, and attach it to the second. Do not use this method for moving IP addresses between standard Scaleway resources (e.g. Instances, Load Balancers) as it will fail - see the relevant product API for an equivalent method.
+
+**Usage:**
+
+```shell
+scw ipam ip move <ip-id ...> [arg=value ...]
+```
+
+
+**Args:**
+
+| Name |   | Description |
+|------|---|-------------|
+| ip-id | Required | IP ID |
+| from-resource.mac-address |  | MAC address of the custom resource |
+| from-resource.name |  | Name of the custom resource |
+| to-resource.mac-address |  | MAC address of the custom resource |
+| to-resource.name |  | Name of the custom resource |
+| region | Default: `fr-par`<br />One of: `fr-par`, `it-mil`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
 
 
 

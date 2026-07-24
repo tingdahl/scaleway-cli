@@ -2,64 +2,6 @@
 # Documentation for `scw webhosting`
 This API allows you to list and restore backups for your cPanel and WordPress Web Hosting service.
 
-- [Backups](#backups)
-  - [Get info about a backup specified by the backup ID.](#get-info-about-a-backup-specified-by-the-backup-id.)
-  - [List all available backups for a hosting account.](#list-all-available-backups-for-a-hosting-account.)
-  - [Restore an entire backup to your hosting environment.](#restore-an-entire-backup-to-your-hosting-environment.)
-- [Backups items](#backups-items)
-  - [List items within a specific backup, grouped by type.](#list-items-within-a-specific-backup,-grouped-by-type.)
-  - [Restore specific items from a backup (e.g., a database or mailbox).](#restore-specific-items-from-a-backup-(e.g.,-a-database-or-mailbox).)
-- [Control Panels](#control-panels)
-  - ["List the control panels type: cpanel or plesk."](#"list-the-control-panels-type:-cpanel-or-plesk.")
-- [Database](#database)
-  - ["Create a new database within your hosting plan"](#"create-a-new-database-within-your-hosting-plan")
-  - ["Delete a database within your hosting plan"](#"delete-a-database-within-your-hosting-plan")
-  - ["Get details of a database within your hosting plan"](#"get-details-of-a-database-within-your-hosting-plan")
-  - ["List all databases within your hosting plan"](#"list-all-databases-within-your-hosting-plan")
-- [Database User](#database-user)
-  - ["Assign a database user to a database"](#"assign-a-database-user-to-a-database")
-  - ["Change the password of a database user"](#"change-the-password-of-a-database-user")
-  - ["Create a new database user"](#"create-a-new-database-user")
-  - ["Delete a database user"](#"delete-a-database-user")
-  - ["Get details of a database user"](#"get-details-of-a-database-user")
-  - ["List all database users"](#"list-all-database-users")
-  - ["Unassign a database user from a database"](#"unassign-a-database-user-from-a-database")
-- [Domain information commands](#domain-information-commands)
-  - [Get DNS records](#get-dns-records)
-- [Domain information commands](#domain-information-commands)
-  - [Check whether you own this domain or not.](#check-whether-you-own-this-domain-or-not.)
-  - [Retrieve detailed information about a specific domain, including its status, DNS configuration, and ownership.](#retrieve-detailed-information-about-a-specific-domain,-including-its-status,-dns-configuration,-and-ownership.)
-  - [Synchronize your DNS records on the Elements Console and on cPanel.](#synchronize-your-dns-records-on-the-elements-console-and-on-cpanel.)
-- [Domain information commands](#domain-information-commands)
-  - [Search for available domains based on domain name.](#search-for-available-domains-based-on-domain-name.)
-- [Free domains](#free-domains)
-  - [Check whether a given slug and free domain combination is available.](#check-whether-a-given-slug-and-free-domain-combination-is-available.)
-  - [Retrieve the list of free root domains available for a Web Hosting.](#retrieve-the-list-of-free-root-domains-available-for-a-web-hosting.)
-- [FTP Account](#ftp-account)
-  - [Create a new FTP account within your hosting plan.](#create-a-new-ftp-account-within-your-hosting-plan.)
-  - [Delete a specific FTP account within your hosting plan.](#delete-a-specific-ftp-account-within-your-hosting-plan.)
-  - [List all FTP accounts within your hosting plan.](#list-all-ftp-accounts-within-your-hosting-plan.)
-- [Hosting management commands](#hosting-management-commands)
-  - [Order a Web Hosting plan](#order-a-web-hosting-plan)
-  - [Create a user session](#create-a-user-session)
-  - [Delete a Web Hosting plan](#delete-a-web-hosting-plan)
-  - [Get a Web Hosting plan](#get-a-web-hosting-plan)
-  - [List all Web Hosting plans](#list-all-web-hosting-plans)
-  - [Update a Web Hosting plan](#update-a-web-hosting-plan)
-- [Mail Account](#mail-account)
-  - [Update the password of a mail account within your hosting plan.](#update-the-password-of-a-mail-account-within-your-hosting-plan.)
-  - [Create a new mail account within your hosting plan.](#create-a-new-mail-account-within-your-hosting-plan.)
-  - [Delete a mail account within your hosting plan.](#delete-a-mail-account-within-your-hosting-plan.)
-  - [List all mail accounts within your hosting plan.](#list-all-mail-accounts-within-your-hosting-plan.)
-- [Offer](#offer)
-  - [List all available hosting offers along with their specific options.](#list-all-available-hosting-offers-along-with-their-specific-options.)
-- [Progresses](#progresses)
-  - [Retrieve detailed information about a specific progress by its ID.](#retrieve-detailed-information-about-a-specific-progress-by-its-id.)
-  - [List recent progresses associated with a specific backup, grouped by type.](#list-recent-progresses-associated-with-a-specific-backup,-grouped-by-type.)
-- [Website](#website)
-  - [List all websites for a specific hosting.](#list-all-websites-for-a-specific-hosting.)
-
-
 ## Backups
 
 Backups represent snapshots of your hosting environment.
@@ -847,7 +789,7 @@ scw webhosting hosting list [arg=value ...]
 |------|---|-------------|
 | order-by | One of: `created_at_asc`, `created_at_desc` | Sort order for Web Hosting plans in the response |
 | tags.{index} |  | Tags to filter for, only Web Hosting plans with matching tags will be returned |
-| statuses.{index} | One of: `unknown_status`, `delivering`, `ready`, `deleting`, `error`, `locked`, `migrating`, `updating` | Statuses to filter for, only Web Hosting plans with matching statuses will be returned |
+| statuses.{index} | One of: `unknown_status`, `delivering`, `ready`, `deleting`, `error`, `locked`, `migrating`, `updating`, `payment_pending`, `payment_failed` | Statuses to filter for, only Web Hosting plans with matching statuses will be returned |
 | domain |  | Domain to filter for, only Web Hosting plans associated with this domain will be returned |
 | project-id |  | Project ID to filter for, only Web Hosting plans from this Project will be returned |
 | control-panels.{index} |  | Name of the control panel to filter for, only Web Hosting plans from this control panel will be returned |
@@ -889,6 +831,7 @@ scw webhosting hosting update [arg=value ...]
 | offer-options.{index}.quantity |  | The option requested quantity to set for the Web Hosting plan |
 | offer-id |  | ID of the new offer for the Web Hosting plan |
 | protected |  | Whether the hosting is protected or not |
+| delete-hosting-after-commitment |  | Whether the hosting is deleted at the end of the commitment period |
 | region | Default: `fr-par`<br />One of: `fr-par`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
 
 

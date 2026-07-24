@@ -2,32 +2,6 @@
 # Documentation for `scw jobs`
 This API allows you to manage your Serverless Jobs.
 
-- [](#)
-  - [Create a new job definition in a specified Project](#create-a-new-job-definition-in-a-specified-project)
-  - [Delete an existing job definition by its unique identifier](#delete-an-existing-job-definition-by-its-unique-identifier)
-  - [Get a job definition by its unique identifier](#get-a-job-definition-by-its-unique-identifier)
-  - [List all your job definitions with filters](#list-all-your-job-definitions-with-filters)
-  - [Run an existing job definition using its unique identifier and create a new job run](#run-an-existing-job-definition-using-its-unique-identifier-and-create-a-new-job-run)
-  - [Update an existing job definition associated with the specified unique identifier](#update-an-existing-job-definition-associated-with-the-specified-unique-identifier)
-- [](#)
-  - [Get a job run by its unique identifier](#get-a-job-run-by-its-unique-identifier)
-  - [List all job runs with filters](#list-all-job-runs-with-filters)
-  - [Stop a job run using its unique identifier](#stop-a-job-run-using-its-unique-identifier)
-  - [Wait for a job run to reach a stable state](#wait-for-a-job-run-to-reach-a-stable-state)
-- [](#)
-  - [Create a secret reference within a job definition](#create-a-secret-reference-within-a-job-definition)
-  - [Delete a secret reference within a job definition](#delete-a-secret-reference-within-a-job-definition)
-  - [Get a secret references within a job definition](#get-a-secret-references-within-a-job-definition)
-  - [List secrets references within a job definition](#list-secrets-references-within-a-job-definition)
-  - [Update a secret reference within a job definition](#update-a-secret-reference-within-a-job-definition)
-- [](#)
-  - [Create a trigger](#create-a-trigger)
-  - [Delete a trigger](#delete-a-trigger)
-  - [Get a trigger](#get-a-trigger)
-  - [List triggers of a job definition](#list-triggers-of-a-job-definition)
-  - [Update a trigger](#update-a-trigger)
-
-
 ## 
 
 
@@ -51,7 +25,7 @@ scw jobs definition create [arg=value ...]
 | name | Required<br />Default: `<generated>` | Name of the job definition |
 | cpu-limit | Required | CPU limit of the job (in mvCPU) |
 | memory-limit | Required | Memory limit of the job (in MiB) |
-| local-storage-capacity |  | Local storage capacity of the job (in MiB) |
+| local-storage-capacity | Required | Local storage capacity of the job (in MiB) |
 | image-uri | Required | Image to use for the job |
 | ~~command~~ | Deprecated | Startup command. If empty or not defined, the image's default command is used. |
 | startup-command.{index} |  | Job startup command. Overrides the default defined in the job image. |
