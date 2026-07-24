@@ -2,56 +2,6 @@
 # Documentation for `scw k8s`
 This API allows you to manage Kubernetes Kapsule and Kosmos clusters.
 
-- [Access Control List (ACL) management commands](#access-control-list-(acl)-management-commands)
-  - [Add new ACLs](#add-new-acls)
-  - [Delete an existing ACL](#delete-an-existing-acl)
-  - [List ACLs](#list-acls)
-  - [Set new ACLs](#set-new-acls)
-- [Kapsule cluster management commands](#kapsule-cluster-management-commands)
-  - [Create a new Cluster](#create-a-new-cluster)
-  - [Delete a Cluster](#delete-a-cluster)
-  - [Get a Cluster](#get-a-cluster)
-  - [List Clusters](#list-clusters)
-  - [List available cluster types for a cluster](#list-available-cluster-types-for-a-cluster)
-  - [List available versions for a Cluster](#list-available-versions-for-a-cluster)
-  - [Reset the admin token of a Cluster](#reset-the-admin-token-of-a-cluster)
-  - [Change the Cluster type](#change-the-cluster-type)
-  - [Update a Cluster](#update-a-cluster)
-  - [Upgrade a Cluster](#upgrade-a-cluster)
-  - [Wait for a cluster to reach a stable state](#wait-for-a-cluster-to-reach-a-stable-state)
-- [Cluster type management commands](#cluster-type-management-commands)
-  - [List cluster types](#list-cluster-types)
-- [Manage your Kubernetes Kapsule cluster's kubeconfig files](#manage-your-kubernetes-kapsule-cluster's-kubeconfig-files)
-  - [Retrieve a kubeconfig](#retrieve-a-kubeconfig)
-  - [Install a kubeconfig](#install-a-kubeconfig)
-  - [Uninstall a kubeconfig](#uninstall-a-kubeconfig)
-- [Kapsule node management commands](#kapsule-node-management-commands)
-  - [Delete a Node in a Cluster](#delete-a-node-in-a-cluster)
-  - [Get a Node in a Cluster](#get-a-node-in-a-cluster)
-  - [List Nodes in a Cluster](#list-nodes-in-a-cluster)
-  - [Reboot a Node in a Cluster](#reboot-a-node-in-a-cluster)
-  - [Replace a Node in a Cluster](#replace-a-node-in-a-cluster)
-  - [Wait for a node to reach a stable state](#wait-for-a-node-to-reach-a-stable-state)
-- [Kapsule pool management commands](#kapsule-pool-management-commands)
-  - [Add an external node to a Kosmos Pool](#add-an-external-node-to-a-kosmos-pool)
-  - [Create a new Pool in a Cluster](#create-a-new-pool-in-a-cluster)
-  - [Delete a Pool in a Cluster](#delete-a-pool-in-a-cluster)
-  - [Get a Pool in a Cluster](#get-a-pool-in-a-cluster)
-  - [List Pools in a Cluster](#list-pools-in-a-cluster)
-  - [Remove a label from a Pool](#remove-a-label-from-a-pool)
-  - [Remove a startup taint from a Pool](#remove-a-startup-taint-from-a-pool)
-  - [Remove a taint from a Pool](#remove-a-taint-from-a-pool)
-  - [Apply a label to a Pool](#apply-a-label-to-a-pool)
-  - [Apply a startup taint to a Pool](#apply-a-startup-taint-to-a-pool)
-  - [Apply a taint to a Pool](#apply-a-taint-to-a-pool)
-  - [Update a Pool in a Cluster](#update-a-pool-in-a-cluster)
-  - [Upgrade a Pool in a Cluster](#upgrade-a-pool-in-a-cluster)
-  - [Wait for a pool to reach a stable state](#wait-for-a-pool-to-reach-a-stable-state)
-- [Available Kubernetes versions commands](#available-kubernetes-versions-commands)
-  - [Get a Version](#get-a-version)
-  - [List all available Versions](#list-all-available-versions)
-
-
 ## Access Control List (ACL) management commands
 
 Network Access Control Lists (ACLs) allow you to manage inbound network traffic by setting up ACL rules.
@@ -182,8 +132,8 @@ scw k8s cluster create [arg=value ...]
 | pools.{index}.autohealing |  | Defines whether the autohealing feature is enabled for the pool |
 | pools.{index}.tags.{index} |  | Tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags) |
 | pools.{index}.kubelet-args.{key} |  | Kubelet arguments to be used by this pool. Note that this feature is experimental |
-| pools.{index}.upgrade-policy.max-unavailable |  | The maximum number of nodes that can be not ready at the same time |
-| pools.{index}.upgrade-policy.max-surge |  | The maximum number of nodes to be created during the upgrade |
+| pools.{index}.upgrade-policy.max-unavailable |  | The maximum number of nodes that can be `upgrading` at the same time |
+| pools.{index}.upgrade-policy.max-surge |  | The maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades |
 | pools.{index}.zone |  | Zone in which the pool's nodes will be spawned |
 | pools.{index}.root-volume-type | One of: `default_volume_type`, `l_ssd`, `b_ssd`, `sbs_5k`, `sbs_15k` | Defines the system volume disk type. Several types of volume (`volume_type`) are provided: |
 | pools.{index}.root-volume-size |  | System volume disk size |
@@ -763,7 +713,7 @@ A node is always part of a pool. Each of them has the Kubernetes software automa
 
 ### Delete a Node in a Cluster
 
-Delete a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
+Delete a specific Node. Pool size is reduced by 1. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 
 **Usage:**
 
@@ -1019,8 +969,8 @@ scw k8s pool create [arg=value ...]
 | autohealing |  | Defines whether the autohealing feature is enabled for the pool |
 | tags.{index} |  | Tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags) |
 | kubelet-args.{key} |  | Kubelet arguments to be used by this pool. Note that this feature is experimental |
-| upgrade-policy.max-unavailable |  |  |
-| upgrade-policy.max-surge |  |  |
+| upgrade-policy.max-unavailable |  | The maximum number of nodes that can be `upgrading` at the same time |
+| upgrade-policy.max-surge |  | The maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades |
 | zone |  | Zone in which the pool's nodes will be spawned |
 | root-volume-type | One of: `default_volume_type`, `l_ssd`, `b_ssd`, `sbs_5k`, `sbs_15k` | Defines the system volume disk type. Several types of volume (`volume_type`) are provided: |
 | root-volume-size |  | System volume disk size |
@@ -1394,8 +1344,8 @@ scw k8s pool update <pool-id ...> [arg=value ...]
 | autohealing |  | New value for the pool autohealing enablement |
 | tags.{index} |  | New tags associated with the pool |
 | kubelet-args.{key} |  | New Kubelet arguments to be used by this pool. Note that this feature is experimental |
-| upgrade-policy.max-unavailable |  |  |
-| upgrade-policy.max-surge |  |  |
+| upgrade-policy.max-unavailable |  | New maximum number of nodes that can be `upgrading` at the same time |
+| upgrade-policy.max-surge |  | New maximum number of nodes to be created during the upgrade |
 | security-group-id |  | Security group ID in which all the nodes of the pool will be moved |
 | region | Default: `fr-par`<br />One of: `fr-par`, `nl-ams`, `pl-waw`, `it-mil` | Region to target. If none is passed will use default region from the config |
 

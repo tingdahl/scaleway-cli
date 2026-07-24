@@ -6,6 +6,7 @@ import (
 	"github.com/scaleway/scaleway-cli/v2/core"
 	accountv3 "github.com/scaleway/scaleway-cli/v2/internal/namespaces/account/v3"
 	"github.com/scaleway/scaleway-cli/v2/internal/namespaces/alias"
+	annotations "github.com/scaleway/scaleway-cli/v2/internal/namespaces/annotations/v1"
 	applesilicon "github.com/scaleway/scaleway-cli/v2/internal/namespaces/applesilicon/v1alpha1"
 	audit_trail "github.com/scaleway/scaleway-cli/v2/internal/namespaces/audit_trail/v1alpha1"
 	autocompleteNamespace "github.com/scaleway/scaleway-cli/v2/internal/namespaces/autocomplete"
@@ -38,6 +39,7 @@ import (
 	"github.com/scaleway/scaleway-cli/v2/internal/namespaces/ipam/v1"
 	jobs "github.com/scaleway/scaleway-cli/v2/internal/namespaces/jobs/v1alpha2"
 	"github.com/scaleway/scaleway-cli/v2/internal/namespaces/k8s/v1"
+	kafka "github.com/scaleway/scaleway-cli/v2/internal/namespaces/kafka/v1alpha1"
 	keymanager "github.com/scaleway/scaleway-cli/v2/internal/namespaces/key_manager/v1alpha1"
 	"github.com/scaleway/scaleway-cli/v2/internal/namespaces/lb/v1"
 	"github.com/scaleway/scaleway-cli/v2/internal/namespaces/login"
@@ -84,6 +86,7 @@ func GetCommands() *core.Commands {
 		initNamespace.GetCommands(),
 		configNamespace.GetCommands(),
 		accountv3.GetCommands(),
+		annotations.GetCommands(),
 		autocompleteNamespace.GetCommands(),
 		object.GetCommands(),
 		versionNamespace.GetCommands(),
@@ -132,6 +135,7 @@ func GetCommands() *core.Commands {
 		mcp.GetCommands(),
 		search.GetCommands(),
 		billing.GetCommands(),
+		kafka.GetCommands(),
 	)
 
 	if beta {

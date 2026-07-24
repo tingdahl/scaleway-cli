@@ -2,24 +2,6 @@
 # Documentation for `scw keymanager`
 This API allows you to conveniently store and use cryptographic keys.
 
-- [Key management commands](#key-management-commands)
-  - [Create a key](#create-a-key)
-  - [Decrypt an encrypted payload](#decrypt-an-encrypted-payload)
-  - [Delete a key](#delete-a-key)
-  - [Delete key material](#delete-key-material)
-  - [Disable key](#disable-key)
-  - [Enable key](#enable-key)
-  - [Encrypt a payload](#encrypt-a-payload)
-  - [Create a data encryption key](#create-a-data-encryption-key)
-  - [Get key metadata](#get-key-metadata)
-  - [Import key material](#import-key-material)
-  - [List keys](#list-keys)
-  - [Apply key protection](#apply-key-protection)
-  - [Rotate a key](#rotate-a-key)
-  - [Remove key protection](#remove-key-protection)
-  - [Update a key](#update-a-key)
-
-
 ## Key management commands
 
 Keys are logical containers which store cryptographic keys.
@@ -51,7 +33,6 @@ scw keymanager key create [arg=value ...]
 | rotation-policy.next-rotation-at |  | Key next rotation date |
 | unprotected |  | (Optional) Defines whether key protection is applied to a key. Protected keys can be used but not deleted |
 | origin | One of: `unknown_origin`, `scaleway_kms`, `external` | Key origin |
-| protection-level | One of: `unknown_protection_level`, `software`, `hsm` | Key Protection level |
 | region | Default: `fr-par`<br />One of: `fr-par`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
 
 
@@ -240,7 +221,7 @@ scw keymanager key import-key-material <key-id ...> [arg=value ...]
 | Name |   | Description |
 |------|---|-------------|
 | key-id | Required | ID of the key in which to import key material |
-| key-material |  | The key material The key material is a random sequence of bytes used to derive a cryptographic key. |
+| key-material |  | The key material |
 | salt |  | (Optional) Salt value to pass the key derivation function |
 | region | Default: `fr-par`<br />One of: `fr-par`, `nl-ams`, `pl-waw` | Region to target. If none is passed will use default region from the config |
 
@@ -248,7 +229,10 @@ scw keymanager key import-key-material <key-id ...> [arg=value ...]
 
 ### List keys
 
-Retrieve a list of keys across all Projects in an Organization or within a specific Project. You must specify the `region`, and either the `organization_id` or the `project_id`.
+Retrieve a list of keys across all Projects in an Organization or within a specific Project. 
+If the user has permissions for all current and future projects: Either organization_id or project_id is required.
+If the user has permissions for all current projects or only specific projects: The project_id is required.
+The `region` parameter in path is needed in both case.
 
 **Usage:**
 
@@ -267,7 +251,6 @@ scw keymanager key list [arg=value ...]
 | name |  | (Optional) Filter by key name |
 | usage | One of: `unknown_usage`, `symmetric_encryption`, `asymmetric_encryption`, `asymmetric_signing` | (Optional) Filter keys by usage. |
 | scheduled-for-deletion |  | Filter keys based on their deletion status. By default, only keys not scheduled for deletion are returned in the output. |
-| protection-level | One of: `unknown_protection_level`, `software`, `hsm` | (Optional) Filter keys by protection level. |
 | organization-id |  | (Optional) Filter by Organization ID |
 | region | Default: `fr-par`<br />One of: `fr-par`, `nl-ams`, `pl-waw`, `all` | Region to target. If none is passed will use default region from the config |
 
