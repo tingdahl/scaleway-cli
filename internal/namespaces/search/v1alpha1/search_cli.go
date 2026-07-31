@@ -50,7 +50,7 @@ func searchResourceSearch() *core.Command {
 		Resource:  "resource",
 		Verb:      "search",
 		// Deprecated:    false,
-		ArgsType: reflect.TypeOf(search.SearchResourcesRequest{}),
+		ArgsType: reflect.TypeFor[search.SearchResourcesRequest](),
 		ArgSpecs: core.ArgSpecs{
 			{
 				Name:       "query",
@@ -214,6 +214,7 @@ func searchResourceSearch() *core.Command {
 				Deprecated: false,
 				Positional: false,
 				EnumValues: []string{
+					"relevance",
 					"created_at_asc",
 					"created_at_desc",
 					"modified_at_asc",
@@ -232,7 +233,7 @@ func searchResourceSearch() *core.Command {
 			client := core.ExtractClient(ctx)
 			api := search.NewAPI(client)
 
-			return api.SearchResources(request)
+			return api.SearchResources(request, scw.WithContext(ctx))
 		},
 	}
 }
