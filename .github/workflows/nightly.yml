@@ -16,7 +16,6 @@ jobs:
         products:
           - account
           - applesilicon
-          - autoscaling
           - baremetal
           - billing
           - block
