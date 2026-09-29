@@ -47,7 +47,7 @@ git pull origin "$BRANCH"
 PRE_MERGE_COMMIT=$(git rev-parse HEAD)
 
 echo "Merging upstream tag ${TAG} into ${BRANCH}"
-if ! git merge "${TAG}" -m "Merge upstream tag ${TAG}"; then
+if ! git merge --no-commit "${TAG}"; then
     unmerged_files=$(git diff --name-only --diff-filter=U)
     if [[ -z "${unmerged_files}" ]]; then
         >&2 echo "Merge failed for a reason other than merge conflicts."
@@ -64,12 +64,13 @@ if ! git merge "${TAG}" -m "Merge upstream tag ${TAG}"; then
     fi
 
     echo "Conflicts found only in .github/workflows/. Resolving using pre-merge versions..."
-    git checkout "${PRE_MERGE_COMMIT}" -- .github/workflows
-    git commit --no-edit
-else
-    # Keep our fork's workflow configuration so PR triggers are not overridden
-    git checkout "${PRE_MERGE_COMMIT}" -- .github/workflows
 fi
+
+# Reset .github/workflows entirely to pre-merge version
+git rm -rf .github/workflows
+git checkout "${PRE_MERGE_COMMIT}" -- .github/workflows
+
+git commit -m "Merge upstream tag ${TAG}"
 
 # Re-apply our snapcraft files on top (merge may have overwritten them
 # if upstream ever adds their own snapcraft.yaml).
