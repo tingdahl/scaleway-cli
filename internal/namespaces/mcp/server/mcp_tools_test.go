@@ -161,7 +161,7 @@ func TestCommandToolExecuteAppliesDefaultValues(t *testing.T) {
 		Namespace: "instance",
 		Resource:  "server-type",
 		Verb:      "list",
-		ArgsType:  reflect.TypeOf(testArgs{}),
+		ArgsType:  reflect.TypeFor[testArgs](),
 		ArgSpecs: core.ArgSpecs{
 			{
 				Name:       "zone",
@@ -203,7 +203,7 @@ func TestCommandToolExecute(t *testing.T) {
 		Namespace: "test",
 		Resource:  "resource",
 		Verb:      "get",
-		ArgsType:  reflect.TypeOf(testArgs{}),
+		ArgsType:  reflect.TypeFor[testArgs](),
 		ArgSpecs: core.ArgSpecs{
 			{
 				Name:       "name",
@@ -261,7 +261,7 @@ func TestCommandToolExecuteWithKebabCase(t *testing.T) {
 		Namespace: "test",
 		Resource:  "resource",
 		Verb:      "list",
-		ArgsType:  reflect.TypeOf(testArgs{}),
+		ArgsType:  reflect.TypeFor[testArgs](),
 		ArgSpecs: core.ArgSpecs{
 			{
 				Name:       "project-id",
@@ -310,7 +310,7 @@ func TestCommandToolExecuteWithKebabCase(t *testing.T) {
 // TestToolMetaSerialization verifies that the Meta field is properly
 // serialized to JSON as _meta when tools are listed.
 func TestToolMetaSerialization(t *testing.T) {
-	allCommands := commands.GetCommands().GetAll()
+	allCommands := commands.GetCommands(context.Background()).GetAll()
 
 	filteredCommands := server.FilterCommands(allCommands, server.CommandFilterConfig{})
 	mcpServer := server.NewMCPServer(filteredCommands, core.BuildInfo{})
