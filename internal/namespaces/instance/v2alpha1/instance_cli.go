@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"github.com/scaleway/scaleway-cli/v2/core"
-	instance "github.com/scaleway/scaleway-sdk-go/api/instance/v2alpha1"
+	"github.com/scaleway/scaleway-sdk-go/api/instance/v2alpha1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -317,6 +317,13 @@ func instanceServerList() *core.Command {
 				Positional: false,
 			},
 			{
+				Name:       "dedicated-pool-ids.{index}",
+				Short:      `Filter servers associated with these Dedicated Pools`,
+				Required:   false,
+				Deprecated: false,
+				Positional: false,
+			},
+			{
 				Name:       "private-network-ids.{index}",
 				Short:      `Private Network IDs to filter servers`,
 				Required:   false,
@@ -403,6 +410,13 @@ func instanceServerCreate() *core.Command {
 			{
 				Name:       "placement-group-id",
 				Short:      `ID of the placement group the server belongs to`,
+				Required:   false,
+				Deprecated: false,
+				Positional: false,
+			},
+			{
+				Name:       "dedicated-pool-id",
+				Short:      `ID of the Dedicated Pool this server belongs to`,
 				Required:   false,
 				Deprecated: false,
 				Positional: false,
@@ -626,6 +640,13 @@ func instanceServerUpdate() *core.Command {
 				Positional: false,
 			},
 			{
+				Name:       "dedicated-pool-id",
+				Short:      `New Dedicated Pool ID`,
+				Required:   false,
+				Deprecated: false,
+				Positional: false,
+			},
+			{
 				Name:       "rescue-mode",
 				Short:      `New rescue mode setting`,
 				Required:   false,
@@ -731,14 +752,14 @@ func instanceServerDelete() *core.Command {
 			},
 			{
 				Name:       "delete-all-volumes",
-				Short:      `Whether to delete all volumes attached to the server`,
+				Short:      `Whether to delete all volumes attached to the server. Deletion of SBS volumes is not supported yet.`,
 				Required:   false,
 				Deprecated: false,
 				Positional: false,
 			},
 			{
 				Name:       "delete-volume-ids.{index}",
-				Short:      `List of volume IDs to delete`,
+				Short:      `List of volume IDs to delete. Deletion of SBS volumes is not supported yet.`,
 				Required:   false,
 				Deprecated: false,
 				Positional: false,
@@ -790,25 +811,29 @@ func instanceServerDelete() *core.Command {
 
 func instanceServerTypeList() *core.Command {
 	return &core.Command{
-		Short:     `List Instance types`,
-		Long:      `List available Instance types and their technical details.`,
+		Short:     `List compatible Instance types`,
+		Long:      `List the Instance types that a given instance could be converted to.`,
 		Namespace: "instance",
 		Resource:  "server-type",
 		Verb:      "list",
 		// Deprecated:    false,
-		ArgsType: reflect.TypeFor[instance.ListServerTypesRequest](),
+		ArgsType: reflect.TypeFor[instance.ListServerCompatibleTypesRequest](),
 		ArgSpecs: core.ArgSpecs{
 			{
 				Name:       "page-token",
-				Short:      `Token for pagination`,
 				Required:   false,
 				Deprecated: false,
 				Positional: false,
 			},
 			{
 				Name:       "page-size",
-				Short:      `Number of server types to return per page`,
 				Required:   false,
+				Deprecated: false,
+				Positional: false,
+			},
+			{
+				Name:       "server-id",
+				Required:   true,
 				Deprecated: false,
 				Positional: false,
 			},
@@ -826,21 +851,17 @@ func instanceServerTypeList() *core.Command {
 			),
 		},
 		Run: func(ctx context.Context, args any) (i any, e error) {
-			request := args.(*instance.ListServerTypesRequest)
+			request := args.(*instance.ListServerCompatibleTypesRequest)
 
 			client := core.ExtractClient(ctx)
 			api := instance.NewAPI(client)
 
-			return api.ListServerTypes(request, scw.WithContext(ctx))
+			return api.ListServerCompatibleTypes(request, scw.WithContext(ctx))
 		},
 		Examples: []*core.Example{
 			{
-				Short:    "List all server-types in the default zone",
-				ArgsJSON: `null`,
-			},
-			{
-				Short:    "List all server-types in fr-par-1 zone",
-				ArgsJSON: `{"zone":"fr-par-1"}`,
+				Short:    "List the 10 first compatible server types for a given instance",
+				ArgsJSON: `{"page_size":10,"server_id":"11111111-1111-1111-1111-111111111111"}`,
 			},
 		},
 	}
@@ -1922,6 +1943,16 @@ func instancePlacementGroupList() *core.Command {
 
 			return api.ListPlacementGroups(request, scw.WithContext(ctx))
 		},
+		Examples: []*core.Example{
+			{
+				Short:    "List all placement groups in the default zone",
+				ArgsJSON: `null`,
+			},
+			{
+				Short:    "List placement groups that match a specified name ('cluster1' will return 'cluster100' and 'cluster1' but not 'foo')",
+				ArgsJSON: `{"name":"cluster1"}`,
+			},
+		},
 	}
 }
 
@@ -1983,6 +2014,24 @@ func instancePlacementGroupCreate() *core.Command {
 
 			return api.CreatePlacementGroup(request, scw.WithContext(ctx))
 		},
+		Examples: []*core.Example{
+			{
+				Short:    "Create a max availability placement group with default name",
+				ArgsJSON: `null`,
+			},
+			{
+				Short:    "Create a max availability placement group with the specified name",
+				ArgsJSON: `{"name":"foobar"}`,
+			},
+			{
+				Short:    "Create a low latency placement group",
+				ArgsJSON: `{"policy_type":"low_latency"}`,
+			},
+			{
+				Short:    "Create a max availability placement group with tags",
+				ArgsJSON: `{"tags":["foo","bar"]}`,
+			},
+		},
 	}
 }
 
@@ -2001,7 +2050,7 @@ func instancePlacementGroupGet() *core.Command {
 				Short:      `UUID of the placement group you want to get`,
 				Required:   true,
 				Deprecated: false,
-				Positional: false,
+				Positional: true,
 			},
 			core.ZoneArgSpec(
 				scw.ZoneFrPar1,
@@ -2024,6 +2073,12 @@ func instancePlacementGroupGet() *core.Command {
 
 			return api.GetPlacementGroup(request, scw.WithContext(ctx))
 		},
+		Examples: []*core.Example{
+			{
+				Short:    "Get a placement group with the specified ID",
+				ArgsJSON: `{"placement_group_id":"6c15f411-3b6f-402d-8eba-ae24ef9254e9"}`,
+			},
+		},
 	}
 }
 
@@ -2042,7 +2097,7 @@ func instancePlacementGroupUpdate() *core.Command {
 				Short:      `UUID of the placement group`,
 				Required:   true,
 				Deprecated: false,
-				Positional: false,
+				Positional: true,
 			},
 			{
 				Name:       "name",
@@ -2091,6 +2146,20 @@ func instancePlacementGroupUpdate() *core.Command {
 
 			return api.UpdatePlacementGroup(request, scw.WithContext(ctx))
 		},
+		Examples: []*core.Example{
+			{
+				Short:    "Update the name of a placement group",
+				ArgsJSON: `{"name":"foobar","placement_group_id":"95053f33-cd3c-4cdc-b2b0-57d2dda97b13"}`,
+			},
+			{
+				Short:    "Update the policy type of a placement group (all Instances in your placement group MUST be shutdown)",
+				ArgsJSON: `{"placement_group_id":"0954ec26-9917-47b6-8c5c-7bc81d7bb9d2","policy_type":"low_latency"}`,
+			},
+			{
+				Short:    "Update the tags of a placement group",
+				ArgsJSON: `{"placement_group_id":"1f883434-8c2d-40f0-b686-d0754b3a7bc0","tags":["update-tag"]}`,
+			},
+		},
 	}
 }
 
@@ -2109,7 +2178,7 @@ func instancePlacementGroupDelete() *core.Command {
 				Short:      `UUID of the placement group you want to delete`,
 				Required:   true,
 				Deprecated: false,
-				Positional: false,
+				Positional: true,
 			},
 			core.ZoneArgSpec(
 				scw.ZoneFrPar1,
@@ -2138,6 +2207,16 @@ func instancePlacementGroupDelete() *core.Command {
 				Resource: "placement-group",
 				Verb:     "delete",
 			}, nil
+		},
+		Examples: []*core.Example{
+			{
+				Short:    "Delete a placement group in the default zone with the specified ID",
+				ArgsJSON: `{"placement_group_id":"11111111-1111-1111-1111-111111111111"}`,
+			},
+			{
+				Short:    "Delete a placement group in nl-ams-1 zone with the specified ID",
+				ArgsJSON: `{"placement_group_id":"11111111-1111-1111-1111-111111111111","zone":"nl-ams-1"}`,
+			},
 		},
 	}
 }
@@ -2622,7 +2701,7 @@ func instanceSecurityGroupAddRules() *core.Command {
 			},
 			{
 				Name:       "security-group-rules.{index}.position",
-				Short:      `Position of the rule in the list`,
+				Short:      `Position of this rule in the rule list, starting at 1`,
 				Required:   false,
 				Deprecated: false,
 				Positional: false,
@@ -2751,7 +2830,7 @@ func instanceSecurityGroupSetRules() *core.Command {
 			},
 			{
 				Name:       "security-group-rules.{index}.position",
-				Short:      `Position of the rule in the list`,
+				Short:      `Position of this rule in the rule list, starting at 1`,
 				Required:   false,
 				Deprecated: false,
 				Positional: false,

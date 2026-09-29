@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"github.com/scaleway/scaleway-cli/v2/core"
-	key_manager "github.com/scaleway/scaleway-sdk-go/api/key_manager/v1alpha1"
+	"github.com/scaleway/scaleway-sdk-go/api/key_manager/v1alpha1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -96,8 +96,6 @@ func keymanagerKeyCreate() *core.Command {
 					"rsa_oaep_2048_sha256",
 					"rsa_oaep_3072_sha256",
 					"rsa_oaep_4096_sha256",
-					"ml_kem_768",
-					"ml_kem_1024",
 				},
 			},
 			{
@@ -119,6 +117,19 @@ func keymanagerKeyCreate() *core.Command {
 					"ml_dsa_44",
 					"ml_dsa_65",
 					"ml_dsa_87",
+					"ec_secp256k1_sha256",
+				},
+			},
+			{
+				Name:       "usage.key-encapsulation",
+				Short:      `Wrap and unwrap key using a key encapsulation algorithm.`,
+				Required:   false,
+				Deprecated: false,
+				Positional: false,
+				EnumValues: []string{
+					"unknown_key_encapsulation",
+					"ml_kem_768",
+					"ml_kem_1024",
 				},
 			},
 			{
@@ -502,7 +513,7 @@ func keymanagerKeyDisable() *core.Command {
 func keymanagerKeyList() *core.Command {
 	return &core.Command{
 		Short: `List keys`,
-		Long: `Retrieve a list of keys across all Projects in an Organization or within a specific Project. 
+		Long: `Retrieve a list of keys across all Projects in an Organization or within a specific Project.
 If the user has permissions for all current and future projects: Either organization_id or project_id is required.
 If the user has permissions for all current projects or only specific projects: The project_id is required.
 The ` + "`" + `region` + "`" + ` parameter in path is needed in both case.`,
@@ -558,6 +569,7 @@ The ` + "`" + `region` + "`" + ` parameter in path is needed in both case.`,
 					"symmetric_encryption",
 					"asymmetric_encryption",
 					"asymmetric_signing",
+					"key_encapsulation",
 				},
 			},
 			{
@@ -816,6 +828,13 @@ func keymanagerKeyDeleteKeyMaterial() *core.Command {
 				Required:   true,
 				Deprecated: false,
 				Positional: true,
+			},
+			{
+				Name:       "key-rotation-index",
+				Short:      `(Optional) Rotation index of which to delete the key material`,
+				Required:   false,
+				Deprecated: false,
+				Positional: false,
 			},
 			core.RegionArgSpec(
 				scw.RegionFrPar,
