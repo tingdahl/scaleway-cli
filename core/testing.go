@@ -309,19 +309,45 @@ func createTestClient(
 // because they will be executed without waiting.
 var DefaultRetryInterval *time.Duration
 
-var foldersUsingVCRv4 = []string{
-	"container",
-	"instance",
-	"k8s",
-	"marketplace",
+var moduleRoot string
+
+func init() {
+	current, _ := os.Getwd()
+	for current != "/" {
+		if _, err := os.Stat(filepath.Join(current, "go.mod")); err == nil {
+			moduleRoot = current
+
+			return
+		}
+		current = filepath.Dir(current)
+	}
+	panic("can't find the module root")
 }
 
-func folderUsesVCRv4(fullFolderPath string) bool {
-	fullPathSplit := strings.Split(fullFolderPath, string(os.PathSeparator))
+var foldersUsingVCRv4 = []string{
+	"cmd/scw",
+	"core",
+	"internal/e2e",
+	"internal/namespaces/alias",
+	"internal/namespaces/applesilicon/v1alpha1",
+	"internal/namespaces/autoscaling/v1alpha2",
+	"internal/namespaces/baremetal/v1",
+	"internal/namesapces/block/v1alpha1",
+	"internal/namesapces/config",
+	"internal/namespaces/container/v1",
+	"internal/namespaces/instance/v1",
+	"internal/namespaces/instance/v2alpha1",
+	"internal/namespaces/k8s/v1",
+	"internal/namespaces/marketplace/v2",
+}
 
-	folder := fullPathSplit[len(fullPathSplit)-2]
+func folderUsesVCRv4(path string) bool {
+	pkg, err := filepath.Rel(moduleRoot, path)
+	if err != nil {
+		panic(err)
+	}
 
-	return slices.Contains(foldersUsingVCRv4, folder)
+	return slices.Contains(foldersUsingVCRv4, pkg)
 }
 
 // Run a CLI integration test. See TestConfig for configuration option
