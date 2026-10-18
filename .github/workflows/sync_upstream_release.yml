@@ -38,13 +38,14 @@ jobs:
         id: resolve_tag
         env:
           INPUT_TAG: ${{ inputs.tag }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
           if [[ -n "${INPUT_TAG}" ]]; then
             tag="${INPUT_TAG}"
           else
-            tag="$(curl -sSfL https://api.github.com/repos/scaleway/scaleway-cli/releases/latest | jq -r '.tag_name')"
+            tag="$(gh release view -R scaleway/scaleway-cli --json tagName -q .tagName)"
           fi
 
           if [[ -z "${tag}" || "${tag}" == "null" ]]; then
