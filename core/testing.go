@@ -228,7 +228,7 @@ func (config *TestConfig) DebugString() string {
 // getTestFilePath returns a valid filename path based on the go test name and suffix. (Take care of non fs friendly char)
 func getTestFilePath(t *testing.T, suffix string) string {
 	t.Helper()
-	specialChars := regexp.MustCompile(`[\\?%*:|"<>. ]`)
+	specialChars := regexp.MustCompile(`[\\?%*:|"'<>. ]`)
 
 	// Replace nested tests separators.
 	fileName := strings.ReplaceAll(t.Name(), "/", "-")
@@ -322,10 +322,22 @@ var foldersUsingVCRv4 = []string{
 	"internal/namespaces/container/v1",
 	"internal/namespaces/feedback",
 	"internal/namespaces/flexibleip/v1alpha1",
+	"internal/namespaces/iam/v1alpha1",
+	"internal/namespaces/info",
+	"internal/namespaces/init",
 	"internal/namespaces/instance/v1",
 	"internal/namespaces/instance/v2alpha1",
+	"internal/namespaces/iot/v1",
 	"internal/namespaces/k8s/v1",
+	"internal/namespaces/lb/v1",
 	"internal/namespaces/marketplace/v2",
+	"internal/namespaces/mcp/server",
+	"internal/namespaces/mnq/v1beta1",
+	"internal/namespaces/redis/v1",
+	"internal/namespaces/registry/v1",
+	"internal/namespaces/secret/v1beta1",
+	"internal/namespaces/test/custom",
+	"internal/namespaces/webhosting/v1",
 }
 
 func folderUsesVCRv4(path string) bool {
@@ -426,11 +438,17 @@ func Test(config *TestConfig) func(t *testing.T) {
 			dir := t.TempDir()
 			overrideEnv["HOME"] = dir
 			overrideEnv[scw.ScwCacheDirEnv] = dir
+			// Isolate tests from the host KUBECONFIG so kubeconfig commands
+			// operate on the temporary HOME
+			if _, ok := overrideEnv["KUBECONFIG"]; !ok {
+				overrideEnv["KUBECONFIG"] = ""
+			}
 			meta["HOME"] = dir
 			meta[scw.ScwCacheDirEnv] = dir
 		}
 
-		overrideExec := defaultOverrideExec
+		// A nil OverrideExec means the child process must really be executed.
+		var overrideExec OverrideExecFunc
 		if config.OverrideExec != nil {
 			overrideExec = func(cmd *exec.Cmd) (exitCode int, err error) {
 				return config.OverrideExec(&ExecFuncCtx{
@@ -547,6 +565,13 @@ func Test(config *TestConfig) func(t *testing.T) {
 			})
 
 			meta["CmdResult"] = result
+
+			defer func() {
+				if r := recover(); r != nil {
+					t.Errorf("Check panicked: error: %v", r)
+				}
+			}()
+
 			config.Check(t, &CheckFuncCtx{
 				ExitCode:    exitCode,
 				Stdout:      stdout.Bytes(),
