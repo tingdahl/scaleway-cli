@@ -38,10 +38,6 @@ func GetCommands() *core.Commands {
 		instanceImage(),
 		instanceIP(),
 		instanceServer(),
-		instanceVolumeType(),
-		instanceSnapshot(),
-		instanceVolume(),
-		instanceVolumeTypeList(),
 		instanceServerList(),
 		instanceServerGet(),
 		instanceServerUpdate(),
@@ -55,19 +51,6 @@ func GetCommands() *core.Commands {
 		instanceImageCreate(),
 		instanceImageUpdate(),
 		instanceImageDelete(),
-		instanceSnapshotList(),
-		instanceSnapshotCreate(),
-		instanceSnapshotGet(),
-		instanceSnapshotUpdate(),
-		instanceSnapshotDelete(),
-		instanceSnapshotExport(),
-		instanceVolumeList(),
-		instanceVolumeCreate(),
-		instanceVolumeGet(),
-		instanceVolumeUpdate(),
-		instanceVolumeDelete(),
-		instanceVolumePlanMigration(),
-		instanceVolumeApplyMigration(),
 		instanceIPList(),
 		instanceIPCreate(),
 		instanceIPGet(),
@@ -167,44 +150,6 @@ func GetCommands() *core.Commands {
 	cmds.Merge(core.NewCommands(
 		imageWaitCommand(),
 	))
-
-	//
-	// Snapshot
-	//
-	human.RegisterMarshalerFunc(instance.CreateSnapshotResponse{}, marshallNestedField("Snapshot"))
-
-	cmds.MustFind("instance", "snapshot", "create").Override(snapshotCreateBuilder)
-	cmds.MustFind("instance", "snapshot", "list").Override(snapshotListBuilder)
-	cmds.MustFind("instance", "snapshot", "update").Override(snapshotUpdateBuilder)
-	cmds.Merge(core.NewCommands(
-		snapshotWaitCommand(),
-		snapshotPlanMigrationCommand(),
-		snapshotApplyMigrationCommand(),
-	))
-
-	//
-	// Volume
-	//
-	human.RegisterMarshalerFunc(instance.CreateVolumeResponse{}, marshallNestedField("Volume"))
-	human.RegisterMarshalerFunc(
-		instance.VolumeState(""),
-		human.EnumMarshalFunc(volumeStateMarshalSpecs),
-	)
-	human.RegisterMarshalerFunc(instance.VolumeSummary{}, volumeSummaryMarshalerFunc)
-	human.RegisterMarshalerFunc(map[string]*instance.Volume{}, volumeMapMarshalerFunc)
-
-	cmds.MustFind("instance", "volume", "create").Override(volumeCreateBuilder)
-	cmds.MustFind("instance", "volume", "list").Override(volumeListBuilder)
-	cmds.MustFind("instance", "volume", "plan-migration").Override(volumeMigrationBuilder)
-	cmds.MustFind("instance", "volume", "apply-migration").Override(volumeMigrationBuilder)
-	cmds.Merge(core.NewCommands(
-		volumeWaitCommand(),
-	))
-
-	//
-	// Volume-Type
-	//
-	cmds.MustFind("instance", "volume-type", "list").Override(volumeTypeListBuilder)
 
 	//
 	// Security Group Rule

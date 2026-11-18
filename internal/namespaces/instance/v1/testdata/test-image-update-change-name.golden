@@ -1,22 +1,24 @@
 🎲🎲🎲 EXIT CODE: 0 🎲🎲🎲
 🟩🟩🟩 STDOUT️ 🟩🟩🟩️
-Image.ID                0dec0bc4-70c9-4876-bec4-c9dff4354081
-Image.Name              foo
-Image.Arch              x86_64
-Image.CreationDate      few seconds ago
-Image.ModificationDate  few seconds ago
-Image.ExtraVolumes      0
-Image.FromServer        -
-Image.Organization      fa1e3217-dc80-42ac-85c3-3f034b78b552
-Image.Public            false
-Image.RootVolume        1da01da7-43bc-4d45-86b1-c8ae40a184eb
-Image.State             available
-Image.Project           fa1e3217-dc80-42ac-85c3-3f034b78b552
-Image.Zone              fr-par-1
+Image.ID                     b090c8ec-60bb-45ea-bb30-a5759936b7ac
+Image.Name                   foo
+Image.Arch                   x86_64
+Image.CreationDate           few seconds ago
+Image.ModificationDate       few seconds ago
+Image.FromServer             -
+Image.Organization           fa1e3217-dc80-42ac-85c3-3f034b78b552
+Image.Public                 false
+Image.RootVolume.ID          4f10d434-77c2-4577-bb86-bcb953bf3ede
+Image.RootVolume.Name        cli-snap-quizzical-chebyshev
+Image.RootVolume.Size        20 GB
+Image.RootVolume.VolumeType  l_ssd
+Image.State                  available
+Image.Project                fa1e3217-dc80-42ac-85c3-3f034b78b552
+Image.Zone                   fr-par-1
 🟩🟩🟩 JSON STDOUT 🟩🟩🟩
 {
   "image": {
-    "id": "0dec0bc4-70c9-4876-bec4-c9dff4354081",
+    "id": "b090c8ec-60bb-45ea-bb30-a5759936b7ac",
     "name": "foo",
     "arch": "x86_64",
     "creation_date": "1970-01-01T00:00:00.0Z",
@@ -27,8 +29,8 @@ Image.Zone              fr-par-1
     "organization": "fa1e3217-dc80-42ac-85c3-3f034b78b552",
     "public": false,
     "root_volume": {
-      "id": "1da01da7-43bc-4d45-86b1-c8ae40a184eb",
-      "name": "cli-snp-optimistic-ride",
+      "id": "4f10d434-77c2-4577-bb86-bcb953bf3ede",
+      "name": "cli-snap-quizzical-chebyshev",
       "size": 20000000000,
       "volume_type": "l_ssd"
     },

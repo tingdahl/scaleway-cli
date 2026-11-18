@@ -19,8 +19,11 @@ func GetCommands() *core.Commands {
 		instancePrivateNetworkInterface(),
 		instanceSecurityGroup(),
 		instanceServerType(),
+		instanceSnapshot(),
 		instanceTemplate(),
 		instanceUserData(),
+		instanceVolumeType(),
+		instanceVolume(),
 		instancePlacementGroupList(),
 		instancePlacementGroupCreate(),
 		instancePlacementGroupGet(),
@@ -42,6 +45,13 @@ func GetCommands() *core.Commands {
 		instanceSecurityGroupDeleteRules(),
 		instanceServerGetCompatibleTypes(),
 		instanceServerTypeList(),
+		instanceSnapshotList(),
+		instanceSnapshotCreate(),
+		instanceSnapshotGet(),
+		instanceSnapshotUpdate(),
+		instanceSnapshotDelete(),
+		instanceSnapshotImportFromObjectStorage(),
+		instanceSnapshotExportToObjectStorage(),
 		instanceTemplateList(),
 		instanceTemplateCreate(),
 		instanceTemplateGet(),
@@ -61,6 +71,12 @@ func GetCommands() *core.Commands {
 		instanceUserDataDelete(),
 		instanceUserDataGetCloudInit(),
 		instanceUserDataSetCloudInit(),
+		instanceVolumeTypeList(),
+		instanceVolumeList(),
+		instanceVolumeCreate(),
+		instanceVolumeGet(),
+		instanceVolumeUpdate(),
+		instanceVolumeDelete(),
 	)
 
 	//
@@ -138,6 +154,22 @@ func GetCommands() *core.Commands {
 	cmds.MustFind("instance", "server", "get-compatible-types").Override(getCompatibleTypesBuilder)
 
 	//
+	// Snapshot
+	//
+	cmds.MustFind("instance", "snapshot", "create").Override(snapshotCreateBuilder)
+	cmds.MustFind("instance", "snapshot", "get").Override(snapshotGetBuilder)
+	cmds.MustFind("instance", "snapshot", "list").Override(snapshotListBuilder)
+	cmds.MustFind("instance", "snapshot", "update").Override(snapshotUpdateBuilder)
+	cmds.MustFind("instance", "snapshot", "delete").Override(snapshotDeleteBuilder)
+	cmds.MustFind("instance", "snapshot", "export-to-object-storage").
+		Override(snapshotExportToObjectStorageBuilder)
+	cmds.MustFind("instance", "snapshot", "import-from-object-storage").
+		Override(snapshotImportToObjectStorageBuilder)
+	cmds.Merge(core.NewCommands(
+		snapshotWaitCommand(),
+	))
+
+	//
 	// Templates
 	//
 	human.RegisterMarshalerFunc(instanceSDK.Template{}, templateMarshalerFunc)
@@ -170,6 +202,28 @@ func GetCommands() *core.Commands {
 
 	cmds.MustFind("instance", "user-data", "set-cloud-init").Override(userDataSetCloudInitBuilder)
 	cmds.MustFind("instance", "user-data", "get-cloud-init").Override(userDataGetCloudInitBuilder)
+
+	//
+	// Volume
+	//
+	human.RegisterMarshalerFunc(
+		instanceSDK.VolumeStatus(""),
+		human.EnumMarshalFunc(volumeStatusMarshalSpecs),
+	)
+
+	cmds.MustFind("instance", "volume", "create").Override(volumeCreateBuilder)
+	cmds.MustFind("instance", "volume", "update").Override(volumeUpdateBuilder)
+	cmds.MustFind("instance", "volume", "get").Override(volumeGetBuilder)
+	cmds.MustFind("instance", "volume", "list").Override(volumeListBuilder)
+	cmds.MustFind("instance", "volume", "delete").Override(volumeDeleteBuilder)
+	cmds.Merge(core.NewCommands(
+		volumeWaitCommand(),
+	))
+
+	//
+	// Volume-Type
+	//
+	cmds.MustFind("instance", "volume-type", "list").Override(volumeTypeListBuilder)
 
 	// Web URLs (--web)
 
